@@ -1,0 +1,7 @@
+4 --- Inteiro 
+8 --- Interger 
+Astro --- Identificador 
+Teste --- Identificador 
+42 --- >= 
+6 --- Begin 
+7 --- End 
