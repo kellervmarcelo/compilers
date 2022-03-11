@@ -6,11 +6,9 @@ output = open("output.txt", "w", encoding="utf-8")
 
 def checkWord(word):
     numberToken = isANumber(word)
-    print(numberToken)
     if numberToken:
         output.write(f"{numberToken} --- {tokens.get(26)} \n")
     else:
         reservedWordToken = isReservedWord(word)
-        print(reservedWordToken)
         output.write(f"{reservedWordToken[1]} --- {reservedWordToken[0]} \n")
     
