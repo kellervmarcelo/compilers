@@ -1,6 +1,10 @@
+from concurrent.futures import process
+from click import command
 from word_checker import checkWord
-import PySimpleGUI as sg
 import os.path
+from tkinter import *
+from tkinter.filedialog import asksaveasfilename, askopenfilename
+import subprocess
 
 f = open("test.txt")
 foundTokens = []
@@ -14,68 +18,64 @@ for token in foundTokens:
 
 f.close()
 
-file_list_column = [
-    [
-        sg.Text("Image Folder"),
-        sg.In(size=(25, 1), enable_events=True, key="-FOLDER-"),
-        sg.FolderBrowse(),
-    ],
-    [
-        sg.Listbox(
-            values=[], enable_events=True, size=(40, 20), key="-FILE LIST-"
-        )
-    ],
-]
+compiler = Tk()
+compiler.title('Aula de Compiladores')
 
-# For now will only show the name of the file that was chosen
-image_viewer_column = [
-    [sg.Text("Choose an image from list on left:")],
-    [sg.Text(size=(40, 1), key="-TOUT-")],
-    [sg.Image(key="-IMAGE-")],
-]
+file_path = ''
 
-# ----- Full layout -----
-layout = [
-    [
-        sg.Column(file_list_column),
-        sg.VSeperator(),
-        sg.Column(image_viewer_column),
-    ]
-]
+def set_file_path(path):
+    global file_path 
+    file_path = path
 
-window = sg.Window("Image Viewer", layout)
+def run ():
+    if file_path == '':
+        save_prompt = Toplevel()
+        text = Label(save_prompt, text="You have to save your code before running it")
+        text.pack()
+        return
+    command = f'python {file_path}'
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
+    code_output.insert(END, output)
+    code_output.insert(END, error)
 
-# Run the Event Loop
-while True:
-    event, values = window.read()
-    if event == "Exit" or event == sg.WIN_CLOSED:
-        break
-    # Folder name was filled in, make a list of files in the folder
-    if event == "-FOLDER-":
-        folder = values["-FOLDER-"]
-        try:
-            # Get list of files in folder
-            file_list = os.listdir(folder)
-        except:
-            file_list = []
+def save_as():
+    if file_path == '':
+        path = asksaveasfilename(filetypes=[('Python Files', '*.py')])
+    else: 
+        path = file_path
+    with open(path, 'w') as file:
+        code = editor.get('1.0', END)
+        file.write(code)
+        set_file_path(path)
 
-        fnames = [
-            f
-            for f in file_list
-            if os.path.isfile(os.path.join(folder, f))
-            and f.lower().endswith((".txt"))
-        ]
-        window["-FILE LIST-"].update(fnames)
-    elif event == "-FILE LIST-":  # A file was chosen from the listbox
-        try:
-            filename = os.path.join(
-                values["-FOLDER-"], values["-FILE LIST-"][0]
-            )
-            window["-TOUT-"].update(filename)
-            window["-IMAGE-"].update(filename=filename)
+def open_file():
+    path = askopenfilename(filetypes=[('Python Files', '*.py')])
+    with open(path, 'r') as file:
+        code = file.read()
+        editor.delete('1.0', END)
+        editor.insert('1.0', code)
+        set_file_path(path)
 
-        except:
-            pass
+menu_bar = Menu(compiler)
 
-window.close()
+file_menu = Menu(menu_bar, tearoff=0)
+file_menu.add_command(label='Open File', command=open_file)
+file_menu.add_command(label='Save', command=save_as)
+file_menu.add_command(label='Save As', command=save_as)
+file_menu.add_command(label='Exit', command=exit)
+menu_bar.add_cascade(label='File', menu=file_menu)
 
+run_bar = Menu(menu_bar, tearoff=0)
+run_bar.add_command(label='Run', command=run)
+menu_bar.add_cascade(label='Run', menu=run_bar)
+
+compiler.config(menu=menu_bar)
+
+editor = Text()
+editor.pack()
+
+code_output = Text(height=7)
+code_output.pack()
+
+compiler.mainloop()
