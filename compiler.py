@@ -1,8 +1,5 @@
-from concurrent.futures import process
-from click import command
-from word_checker import checkWord
-import os.path
 from tkinter import *
+from src.lexical_analysis import check_word
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 import subprocess
 
@@ -14,7 +11,7 @@ for line in f:
         foundTokens.append(word)
 
 for token in foundTokens:
-    checkWord(token)
+    print(check_word(token))
 
 f.close()
 
@@ -23,31 +20,21 @@ compiler.title('Aula de Compiladores')
 
 file_path = ''
 
-def set_file_path(path):
-    global file_path 
-    file_path = path
 
-def run ():
-    if file_path == '':
-        save_prompt = Toplevel()
-        text = Label(save_prompt, text="You have to save your code before running it")
-        text.pack()
-        return
-    command = f'python {file_path}'
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    output, error = process.communicate()
-    code_output.insert(END, output)
-    code_output.insert(END, error)
+def set_file_path(path):
+    global file_path
+    file_path = path
 
 def save_as():
     if file_path == '':
         path = asksaveasfilename(filetypes=[('Python Files', '*.py')])
-    else: 
+    else:
         path = file_path
     with open(path, 'w') as file:
         code = editor.get('1.0', END)
         file.write(code)
         set_file_path(path)
+
 
 def open_file():
     path = askopenfilename(filetypes=[('Python Files', '*.py')])
@@ -57,6 +44,7 @@ def open_file():
         editor.insert('1.0', code)
         set_file_path(path)
 
+
 menu_bar = Menu(compiler)
 
 file_menu = Menu(menu_bar, tearoff=0)
@@ -64,11 +52,14 @@ file_menu.add_command(label='Open File', command=open_file)
 file_menu.add_command(label='Save', command=save_as)
 file_menu.add_command(label='Save As', command=save_as)
 file_menu.add_command(label='Exit', command=exit)
+
+run_menu = Menu(menu_bar, tearoff=0)
+run_menu.add_command(label='Lexical analysis')
+
 menu_bar.add_cascade(label='File', menu=file_menu)
+menu_bar.add_cascade(label='Run', menu=run_menu)
 
 run_bar = Menu(menu_bar, tearoff=0)
-run_bar.add_command(label='Run', command=run)
-menu_bar.add_cascade(label='Run', menu=run_bar)
 
 compiler.config(menu=menu_bar)
 
