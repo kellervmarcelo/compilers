@@ -27,7 +27,7 @@ def set_file_path(path):
 
 def save_as():
     if file_path == '':
-        path = asksaveasfilenam(filetypes=[('All Files', '*')])
+        path = asksaveasfilename(filetypes=[('All Files', '*')])
     else:
         path = file_path
     with open(path, 'w') as file:
