@@ -3,23 +3,22 @@ from src.lexical_analysis import check_word
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 import subprocess
 
-f = open("test.txt")
-foundTokens = []
-
-for line in f:
-    for word in line.split():
-        foundTokens.append(word)
-
-for token in foundTokens:
-    print(check_word(token))
-
-f.close()
 
 compiler = Tk()
 compiler.title('Aula de Compiladores')
 
 file_path = ''
 
+def lexycal_analisys():
+    code = editor.get("1.0",END)
+    foundTokens = []
+
+    for word in code.split():
+        foundTokens.append(word)
+
+    code_output.delete('1.0', END)
+    for token in foundTokens:
+        code_output.insert(END, f'{check_word(token)}\n')
 
 def set_file_path(path):
     global file_path
@@ -54,7 +53,7 @@ file_menu.add_command(label='Save As', command=save_as)
 file_menu.add_command(label='Exit', command=exit)
 
 run_menu = Menu(menu_bar, tearoff=0)
-run_menu.add_command(label='Lexical analysis')
+run_menu.add_command(label='Lexical analysis', command=lexycal_analisys)
 
 menu_bar.add_cascade(label='File', menu=file_menu)
 menu_bar.add_cascade(label='Run', menu=run_menu)
