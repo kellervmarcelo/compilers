@@ -1,3 +1,5 @@
+from .utils import is_a_number
+
 tokens = {
     1: "Program",
     2: "Label",
@@ -51,8 +53,13 @@ tokens = {
     50: "..",
 }
 
-def isReservedWord(word):
+
+def check_word(word):
     for key, value in tokens.items():
         if value == word:
-            return value, key
-    return tokens.get(25), word
+            return key, value;
+
+    if (is_a_number(word)):
+        return 26, int(word)
+
+    return 25, word
