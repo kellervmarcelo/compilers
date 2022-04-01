@@ -1,6 +1,7 @@
 from tkinter import *
 from src.lexical_analysis import check_word
 from tkinter.filedialog import asksaveasfilename, askopenfilename
+import re
 import subprocess
 
 
@@ -13,8 +14,9 @@ def lexycal_analisys():
     code = editor.get("1.0",END)
     foundTokens = []
 
-    for word in code.split():
-        foundTokens.append(word)
+    for line in code.split("\n"):
+        for word in re.split(r'(\ |\n|\*)', line):
+            foundTokens.append(word)
 
     code_output.delete('1.0', END)
     for token in foundTokens:
