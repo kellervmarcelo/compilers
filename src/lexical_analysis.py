@@ -6,7 +6,10 @@ from .tokens import tokens, separators
 def separate_tokens(string):
     regex = r'(\ |\n|\*|%s)' % ("|".join("\\" + "\\".join(list(s))
                                          for s in separators))
-    return re.split(regex, string)
+
+    separated_tokens = re.split(regex, string)
+
+    return filter(lambda x: x not in set(["", " "]), separated_tokens)
 
 
 def check_word(word):
