@@ -4,7 +4,7 @@ from .tokens import tokens, separators
 
 
 def separate_tokens(string):
-    regex = r'(\ |\n|\*|%s)' % ("|".join("\\" + "\\".join(list(s))
+    regex = r'(\'.*\'|\*.*\*|\ |\n|\*|%s)' % ("|".join("\\" + "\\".join(list(s))
                                          for s in separators))
 
     separated_tokens = re.split(regex, string)
