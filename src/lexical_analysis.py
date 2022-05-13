@@ -4,17 +4,16 @@ from .tokens import tokens, separators
 
 
 def separate_tokens(string):
-    regex = r'(\'.*\'|\*.*\*|\ |\n|\*|%s)' % ("|".join(
+    regex = r'(\'.*\'|\*.*\*|\ |\t|\n|\*|%s)' % ("|".join(
         "\\" + "\\".join(list(s)) for s in separators))
 
     separated_tokens = re.split(regex, string)
 
-    return filter(lambda x: x not in set(["", " "]), separated_tokens)
-
+    return filter(lambda x: x not in set(["", " ", "\t", "\n"]), separated_tokens)
 
 def check_word(word):
     for key, value in tokens.items():
-        if value == word:
+        if value.casefold() == word.casefold():
             return key, value
 
     if (is_a_number(word)):
@@ -39,4 +38,4 @@ def check_word(word):
     if (re.fullmatch(r"End\.", word, re.IGNORECASE)):
         return 7, 'End'
 
-    raise Exception("Invalid tokens")
+    return -1, 'INVALID TOKEN: ' + word
