@@ -32,7 +32,7 @@ def check_word(word):
         # Comment
         return
 
-    if (re.fullmatch(r'[a-zA-Z][a-zA-Z0-9]{0,29}', word)):
+    if (re.fullmatch(r'[a-zA-Z][a-zA-Z0-9_]{0,29}', word)):
         return 25, word
 
     if (re.fullmatch(r"End\.", word, re.IGNORECASE)):
