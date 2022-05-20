@@ -1,25 +1,25 @@
 from tkinter import *
-from src.lexical_analysis import check_word, separate_tokens
+from src.lexical_analysis import lexical_analysis
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 import subprocess
-
 
 compiler = Tk()
 compiler.title('Aula de Compiladores')
 
 file_path = ''
 
-def lexycal_analisys():
-    code = editor.get("1.0",END)
-    foundTokens = []
+lexical_analysis_result = []
+syntactic_analysis_result = []
+semantic_analysis_result = []
 
-    for line in code.split("\n"):
-        for word in separate_tokens(line):
-            foundTokens.append(word)
+def run_lexical_analysis():
+    code = editor.get("1.0",END)
+
+    lexical_analysis_result = lexical_analysis(code)
 
     code_output.delete('1.0', END)
-    for token in foundTokens:
-        code_output.insert(END, f'{check_word(token)}\n')
+    for token in lexical_analysis_result:
+        code_output.insert(END, f'Token: {token.token} | Ref. Code: {token.ref_code} | Line: {token.line}\n')
 
 def set_file_path(path):
     global file_path
@@ -54,7 +54,7 @@ file_menu.add_command(label='Save As', command=save_as)
 file_menu.add_command(label='Exit', command=exit)
 
 run_menu = Menu(menu_bar, tearoff=0)
-run_menu.add_command(label='Lexical analysis', command=lexycal_analisys)
+run_menu.add_command(label='Lexical analysis', command=run_lexical_analysis)
 
 menu_bar.add_cascade(label='File', menu=file_menu)
 menu_bar.add_cascade(label='Run', menu=run_menu)

@@ -2,6 +2,22 @@ import re
 from .utils import is_a_number
 from .tokens import tokens, separators
 
+class Token:
+    def __init__(self, token, ref_code, line):
+        self.token = token
+        self.ref_code = ref_code
+        self.line = line
+
+def lexical_analysis(code):
+    foundTokens = []
+
+    for idx, line in enumerate(code.split("\n")):
+        for token in separate_tokens(line):
+            checked_word = check_word(token)
+            if checked_word is not None:
+                foundTokens.append(Token(checked_word[1], checked_word[0], idx + 1))
+
+    return foundTokens
 
 def separate_tokens(string):
     regex = r'(\'.*\'|\*.*\*|\ |\t|\n|\*|%s)' % ("|".join(
