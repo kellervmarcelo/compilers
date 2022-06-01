@@ -1,12 +1,6 @@
 import re
-from .utils import is_a_number
-from .tokens import tokens, separators
-
-class Token:
-    def __init__(self, token, ref_code, line):
-        self.token = token
-        self.ref_code = ref_code
-        self.line = line
+from src.tokens import Token, tokens, separators
+from src.utils import is_a_number
 
 def lexical_analysis(code):
     foundTokens = []
@@ -20,7 +14,7 @@ def lexical_analysis(code):
     return foundTokens
 
 def separate_tokens(string):
-    regex = r'(\'.*\'|\*.*\*|\ |\t|\n|\*|%s)' % ("|".join(
+    regex = r'(\'.*\'|\(\*.*\*\)|\ |\t|\n|\*|(?<![0-9])-[0-9]*|%s)' % ("|".join(
         "\\" + "\\".join(list(s)) for s in separators))
 
     separated_tokens = re.split(regex, string)
@@ -44,7 +38,7 @@ def check_word(word):
             raise Exception(
                 "String with lenght over 255 characters not allowed")
 
-    if (re.fullmatch(r'\*.*\*', word)):
+    if (re.fullmatch(r'\(\*.*\*\)', word)):
         # Comment
         return
 
