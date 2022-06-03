@@ -22,7 +22,6 @@ def syntactic_analysis(input_stack):
     derivation_stack = [52]
 
     while len(input_stack) > 0:
-
         if derivation_stack[0] < 52:
             if derivation_stack[0] == input_stack[0].ref_code:
                 derivation_stack.pop(0)
@@ -49,4 +48,9 @@ def syntactic_analysis(input_stack):
             token_code = find_token_code(item)
             derivation_stack.insert(0, token_code)
 
+    if len(derivation_stack) > 0:
+       print(derivation_stack) 
+       raise Exception("Derivations stack not empty")
+
     return
+

@@ -31,7 +31,19 @@ def run_syntactic_analysis():
     global syntactic_analysis_result
     global lexical_analysis_result
 
-    syntactic_analysis_result = syntactic_analysis(lexical_analysis_result)
+    try:
+        syntactic_analysis_result = syntactic_analysis(lexical_analysis_result)
+        code_output.delete('1.0', tk.END)
+        code_output.insert(
+            tk.END,
+            "Análise sintática concluída com sucesso."
+        )
+    except:
+        code_output.delete('1.0', tk.END)
+        code_output.insert(
+            tk.END,
+            "Erro na análise sintática"
+        )
 
 
 def set_file_path(path):
