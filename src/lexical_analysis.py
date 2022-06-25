@@ -2,24 +2,39 @@ import re
 from src.tokens import Token, tokens, separators
 from src.utils import is_a_number
 
+
 def lexical_analysis(code):
     foundTokens = []
+
+    comments_regex = re.compile(r"\(\*.*?\*\)", re.S)
+
+    while True:
+        match = re.search(comments_regex, code)
+        if match == None:
+            break
+
+        new_comment = re.sub(r'[^\n]', '', match.group(0))
+        code = code[:match.start()] + new_comment + code[match.end():]
 
     for idx, line in enumerate(code.split("\n")):
         for token in separate_tokens(line):
             checked_word = check_word(token)
             if checked_word is not None:
-                foundTokens.append(Token(checked_word[1], checked_word[0], idx + 1))
+                foundTokens.append(
+                    Token(checked_word[1], checked_word[0], idx + 1))
 
     return foundTokens
 
+
 def separate_tokens(string):
-    regex = r'(\'.*\'|\(\*.*\*\)|\ |\t|\n|\*|(?<![0-9])-[0-9]*|%s)' % ("|".join(
+    separator_regex = r'(\'.*\'|\ |\t|\n|\*|(?<![0-9])-[0-9]*|%s)' % ("|".join(
         "\\" + "\\".join(list(s)) for s in separators))
 
-    separated_tokens = re.split(regex, string)
+    separated_tokens = re.split(separator_regex, string)
 
-    return filter(lambda x: x not in set(["", " ", "\t", "\n"]), separated_tokens)
+    return filter(lambda x: x not in set(["", " ", "\t", "\n"]),
+                  separated_tokens)
+
 
 def check_word(word):
     for key, value in tokens.items():

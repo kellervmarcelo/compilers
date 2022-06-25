@@ -49,7 +49,6 @@ def syntactic_analysis(input_stack):
             derivation_stack.insert(0, token_code)
 
     if len(derivation_stack) > 0:
-       print(derivation_stack) 
        raise Exception("Derivations stack not empty")
 
     return
