@@ -38,9 +38,9 @@ def run_syntactic_analysis():
         syntactic_output.delete('1.0', tk.END)
         syntactic_output.insert(tk.END,
                                 "Análise sintática concluída com sucesso.")
-    except:
+    except Exception as e:
         syntactic_output.delete('1.0', tk.END)
-        syntactic_output.insert(tk.END, "Erro na análise sintática")
+        syntactic_output.insert(tk.END, str(e))
 
 
 def run_semantic_analysis():
@@ -104,7 +104,9 @@ ref_table = ttk.Treeview(left_frame,
                          columns=ref_table_columns,
                          show='headings')
 ref_table.heading('ref_code', text='Cód.')
+ref_table.column('ref_code', width=50)
 ref_table.heading('description', text='Descrição')
+ref_table.column('description', width=130)
 
 for key, value in tokens.items():
     ref_table.insert('', tk.END, values=(key, value))
@@ -120,11 +122,14 @@ mid_frame.pack(side=tk.LEFT, fill='both', expand=1)
 editor = tk.Text(mid_frame)
 editor.pack(fill='both', expand=1)
 
-right_frame = tk.Frame(root, width=50)
+right_frame = tk.Frame(root, width=20)
 right_frame.rowconfigure(0, weight=1)
 right_frame.rowconfigure(1, weight=1)
 right_frame.rowconfigure(2, weight=1)
-right_frame.pack(side=tk.LEFT, fill='both', expand=1)
+
+right_frame.columnconfigure(0, weight=1)
+
+right_frame.pack(side=tk.LEFT, fill='y')
 
 lexical_output_columns = ('ref_code', 'token', 'line')
 lexical_output = ttk.Treeview(right_frame,
@@ -132,15 +137,17 @@ lexical_output = ttk.Treeview(right_frame,
                               show='headings')
 
 lexical_output.heading('ref_code', text='Cód.')
+# lexical_output.column('ref_code', width=50)
 lexical_output.heading('token', text='Token')
+# lexical_output.column('ref_code', width=50)
 lexical_output.heading('line', text='Linha')
-
-lexical_output.grid(column=0, row=0)
+# lexical_output.column('ref_code', width=50)
 
 syntactic_output = tk.Text(right_frame)
-syntactic_output.grid(column=0, row=1)
-
 semantic_output = tk.Text(right_frame)
+
+lexical_output.grid(column=0, row=0)
+syntactic_output.grid(column=0, row=1)
 semantic_output.grid(column=0, row=2)
 
 root.mainloop()
