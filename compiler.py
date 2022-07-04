@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from src.semantic_analysis import semantic_analysis
 from src.lexical_analysis import lexical_analysis
 from src.syntactic_analysis import syntactic_analysis
 from tkinter.filedialog import asksaveasfilename, askopenfilename
@@ -34,7 +35,7 @@ def run_syntactic_analysis():
     run_lexical_analysis()
 
     try:
-        syntactic_analysis_result = syntactic_analysis(lexical_analysis_result)
+        syntactic_analysis_result = syntactic_analysis(lexical_analysis_result.copy())
         syntactic_output.delete('1.0', tk.END)
         syntactic_output.insert(tk.END,
                                 "Análise sintática concluída com sucesso.")
@@ -44,10 +45,12 @@ def run_syntactic_analysis():
 
 
 def run_semantic_analysis():
-    global syntactic_analysis_result
+    global lexical_analysis_result
     global semantic_analysis_result
 
     run_syntactic_analysis()
+
+    semantic_analysis(lexical_analysis_result.copy())
     pass
 
 
