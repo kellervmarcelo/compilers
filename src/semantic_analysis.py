@@ -61,7 +61,6 @@ def semantic_analysis(input_stack: list[Token]):
             category = token.ref_code
 
         if (not isDeclaration(token.ref_code)):
-
             if (token.ref_code != Categories.begin.value):
                 scope_level += 1
                 start_of_scope = True
@@ -69,7 +68,7 @@ def semantic_analysis(input_stack: list[Token]):
                 begin_level += 1
 
         if (isEndOfBlock(token)):
-            if (begin_level == scope_level):
+            if ((begin_level - 1) == scope_level):
                 scope_level -= 1
                 scope_stack.pop(-1)
 
