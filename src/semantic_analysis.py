@@ -5,11 +5,12 @@ from src.tokens import Token
 
 class SemanticSymbol:
 
-    def __init__(self, symbol, category, symbol_type, level):
+    def __init__(self, symbol, category, symbol_type, level, scope_name):
         self.symbol = symbol
         self.category = category
         self.symbol_type = symbol_type
         self.level = level
+        self.scope_name = scope_name
 
 
 class Categories(enum.Enum):
@@ -40,7 +41,10 @@ def isDeclaration(category):
 
 def semantic_analysis(input_stack: list[Token]):
     category = 0
-    level = 0
+    scope_level = 0
+    begin_level = 0
+    start_of_scope = False
+    scope_stack = []
 
     symbols = []
 
@@ -56,15 +60,27 @@ def semantic_analysis(input_stack: list[Token]):
         if (token.ref_code in Categories._value2member_map_):
             category = token.ref_code
 
-        if (token.ref_code == Categories.procedure.value
-                or token.ref_code == Categories.program.value):
-            level += 1
+        if (not isDeclaration(token.ref_code)):
+
+            if (token.ref_code != Categories.begin.value):
+                scope_level += 1
+                start_of_scope = True
+            else:
+                begin_level += 1
 
         if (isEndOfBlock(token)):
-            level -= 1
+            if (begin_level == scope_level):
+                scope_level -= 1
+                scope_stack.pop(-1)
+
+            begin_level -= 1
 
         if (isIdentifier(token)):
-            symbol = SemanticSymbol(token.token, category, "", level)
+            if start_of_scope:
+                scope_stack.append(token.token)
+                start_of_scope = False
+
+            symbol = SemanticSymbol(token.token, category, "", scope_level, scope_stack[-1])
 
             if (isDeclaration(category)):
                 if (isDeclared(symbol)):

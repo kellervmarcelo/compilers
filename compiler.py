@@ -35,7 +35,8 @@ def run_syntactic_analysis():
     run_lexical_analysis()
 
     try:
-        syntactic_analysis_result = syntactic_analysis(lexical_analysis_result.copy())
+        syntactic_analysis_result = syntactic_analysis(
+            lexical_analysis_result.copy())
         syntactic_output.delete('1.0', tk.END)
         syntactic_output.insert(tk.END,
                                 "Análise sintática concluída com sucesso.")
