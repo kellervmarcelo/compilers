@@ -87,3 +87,5 @@ def semantic_analysis(input_stack: list[Token]):
                         f"Declaration not allowed. Line: {token.line}")
 
                 symbols.append(symbol)
+
+    return symbols

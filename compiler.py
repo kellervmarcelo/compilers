@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from src.semantic_analysis import semantic_analysis
+from src.semantic_analysis import Categories, semantic_analysis
 from src.lexical_analysis import lexical_analysis
 from src.syntactic_analysis import syntactic_analysis
 from tkinter.filedialog import asksaveasfilename, askopenfilename
@@ -20,12 +20,20 @@ def run_lexical_analysis():
     code = editor.get("1.0", tk.END)
 
     global lexical_analysis_result
-    lexical_analysis_result = lexical_analysis(code)
 
-    for token in lexical_analysis_result:
-        lexical_output.insert('',
-                              tk.END,
-                              values=(token.ref_code, token.token, token.line))
+    try:
+        lexical_analysis_result = lexical_analysis(code)
+
+        for token in lexical_analysis_result:
+            lexical_output.insert('',
+                                  tk.END,
+                                  values=(token.ref_code, token.token,
+                                          token.line))
+
+        syntactic_output.insert(tk.END,
+                                "Análise léxica: concluída com sucesso.\n")
+    except Exception as e:
+        syntactic_output.insert(tk.END, f"Análise léxica: {str(e)}.\n")
 
 
 def run_syntactic_analysis():
@@ -37,12 +45,10 @@ def run_syntactic_analysis():
     try:
         syntactic_analysis_result = syntactic_analysis(
             lexical_analysis_result.copy())
-        syntactic_output.delete('1.0', tk.END)
         syntactic_output.insert(tk.END,
-                                "Análise sintática concluída com sucesso.")
+                                "Análise sintática: concluída com sucesso.\n")
     except Exception as e:
-        syntactic_output.delete('1.0', tk.END)
-        syntactic_output.insert(tk.END, str(e))
+        syntactic_output.insert(tk.END, f'Análise sintática: {str(e)}.')
 
 
 def run_semantic_analysis():
@@ -51,8 +57,20 @@ def run_semantic_analysis():
 
     run_syntactic_analysis()
 
-    semantic_analysis(lexical_analysis_result.copy())
-    pass
+    try:
+        semantic_analysis_result = semantic_analysis(
+            lexical_analysis_result.copy())
+        for symbol in semantic_analysis_result:
+            semantic_output.insert('',
+                                   tk.END,
+                                   values=(symbol.symbol,
+                                           Categories(symbol.category).name,
+                                           symbol.symbol_type, symbol.level,
+                                           symbol.scope_name))
+        syntactic_output.insert(tk.END,
+                                f'Análise semântica: concluída com sucesso.')
+    except Exception as e:
+        syntactic_output.insert(tk.END, f'Análise semântica: {str(e)}.')
 
 
 def set_file_path(path):
@@ -141,14 +159,30 @@ lexical_output = ttk.Treeview(right_frame,
                               show='headings')
 
 lexical_output.heading('ref_code', text='Cód.')
-# lexical_output.column('ref_code', width=50)
+# lexical_output.column('ref_code', stretch=True)
 lexical_output.heading('token', text='Token')
-# lexical_output.column('ref_code', width=50)
+# lexical_output.column('token', stretch=True)
 lexical_output.heading('line', text='Linha')
-# lexical_output.column('ref_code', width=50)
+# lexical_output.column('line', stretch=True)
 
 syntactic_output = tk.Text(right_frame)
-semantic_output = tk.Text(right_frame)
+
+semantic_output_columns = ('symbol', 'category', 'symbol_type', 'level',
+                           'scope_name')
+semantic_output = ttk.Treeview(right_frame,
+                               columns=semantic_output_columns,
+                               show='headings')
+
+semantic_output.heading('symbol', text='Símbolo')
+# semantic_output.column('symbol', stretch=True)
+semantic_output.heading('category', text='Categoria')
+# semantic_output.column('category', stretch=True)
+semantic_output.heading('symbol_type', text='Tipo')
+# semantic_output.column('symbol_type', stretch=True)
+semantic_output.heading('level', text='Nível')
+# semantic_output.column('level', stretch=True)
+semantic_output.heading('scope_name', text='Escopo')
+# semantic_output.column('scope_name', stretch=True)
 
 lexical_output.grid(column=0, row=0)
 syntactic_output.grid(column=0, row=1)
