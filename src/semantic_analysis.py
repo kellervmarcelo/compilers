@@ -31,9 +31,12 @@ def isEndOfBlock(token: Token):
 
 
 def isDeclaration(category):
-    if (category == Categories.program.value
-            or category == Categories.procedure.value
-            or category == Categories.begin.value):
+    #    if (category == Categories.program.value
+    #            or category == Categories.procedure.value
+    #            or category == Categories.begin.value):
+    #        return False
+
+    if (category == Categories.begin.value):
         return False
 
     return True
@@ -48,25 +51,32 @@ def semantic_analysis(input_stack: list[Token]):
 
     symbols = []
 
-    def isDeclared(symbol):
+    def searchInTable(symbol):
         for table_symbol in symbols:
-            if (table_symbol.symbol == symbol.symbol
+            if (table_symbol.symbol.lower() == symbol.symbol.lower()
                     and table_symbol.level == symbol.level):
-                return True
+                return table_symbol
 
-        return False
+    for idx, token in enumerate(input_stack):
 
-    for token in input_stack:
+        def isAssignment():
+            return input_stack[idx + 1].ref_code == 38
+
+        # Updates category for each of the keywords declared in the Categories Enum
         if (token.ref_code in Categories._value2member_map_):
             category = token.ref_code
 
-        if (not isDeclaration(token.ref_code)):
-            if (token.ref_code != Categories.begin.value):
-                scope_level += 1
-                start_of_scope = True
-            else:
-                begin_level += 1
+        # Keeps track of beginning of new scopes
+        if (token.ref_code
+                in [Categories.procedure.value, Categories.program.value]):
+            scope_level += 1
+            start_of_scope = True
 
+        # Keeps track of BEGIN keyword appearence to check against END keyword
+        if (token.ref_code == Categories.begin.value):
+            begin_level += 1
+
+        # Keeps track of ending of new scopes
         if (isEndOfBlock(token)):
             if ((begin_level - 1) == scope_level):
                 scope_level -= 1
@@ -75,17 +85,33 @@ def semantic_analysis(input_stack: list[Token]):
             begin_level -= 1
 
         if (isIdentifier(token)):
+            # Keeps track of beginning of new scopes
             if start_of_scope:
                 scope_stack.append(token.token)
                 start_of_scope = False
 
-            symbol = SemanticSymbol(token.token, category, "", scope_level, scope_stack[-1])
+            symbol = SemanticSymbol(token.token, category, "", scope_level,
+                                    scope_stack[-1])
 
+            table_symbol = searchInTable(symbol)
             if (isDeclaration(category)):
-                if (isDeclared(symbol)):
+                # Checks if variable is being declared for the second time
+                if (table_symbol != None):
                     raise Exception(
                         f"Declaration not allowed. Line: {token.line}")
 
                 symbols.append(symbol)
+            else:
+                # Checks if variable was not declared
+                if (table_symbol == None):
+                    raise Exception(
+                        f"Undeclared variable or procedure. Line: {token.line}"
+                    )
+
+                # Checks if const is being assigned a new value
+                if (isAssignment()
+                        and table_symbol.category == Categories.const.value):
+                    raise Exception(
+                        f"Const assignment is not allowed. Line: {token.line}")
 
     return symbols

@@ -2,25 +2,25 @@
 PROGRAM TESTE123;
 	LABEL
 		label_a, label_b;
-	
+
 	CONST
 		a = -100;
 		b = -200;
-	VAR 
+	VAR
 		 X, Y, Z : INTEGER;
 		array_a : ARRAY[0..20] OF INTEGER;
 		array_b, array_c, array_d : ARRAY[0..1000] OF INTEGER;
-	
+
 	(*Declara��o de procedure, inicia novo bloco*)
 	PROCEDURE p_teste(idd : INTEGER);
 		LABEL
 			label_a, label_b;
-			
+
 		CONST
 			a = 100;
 			b = 200;
 
-		VAR 
+		VAR
 			X, Y, Z : INTEGER;
 			array_a : ARRAY[0..20] OF INTEGER;
 			array_b : ARRAY[0..1000] OF INTEGER;
@@ -29,7 +29,7 @@ PROGRAM TESTE123;
 
 	END;
 
-(*	
+(*
 	- In�cio do bloco principal
 *)
 
@@ -38,10 +38,10 @@ BEGIN
 	begin
 		x := 20;
 	end;
-	
+
 	(*Chama a procedure*)
 	CALL p_teste( 100 );
-	
+
 	(*Testa as possibilidades do IF*)
 	IF (10 > 15) THEN
 		BEGIN
@@ -52,12 +52,12 @@ BEGIN
 
 	(*Testa as possibilidades do WHILE*)
 	WHILE(x <> 0)DO
-	BEGIN 
-	END; 
+	BEGIN
+	END;
 
 	(*Testa as possibilidades do REPEAT*)
-	REPEAT 
-	BEGIN 
+	REPEAT
+	BEGIN
 	END
 	UNTIL X > 10;
 

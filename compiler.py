@@ -21,6 +21,8 @@ def run_lexical_analysis():
 
     global lexical_analysis_result
 
+    syntactic_output.delete('1.0', tk.END)
+
     try:
         lexical_analysis_result = lexical_analysis(code)
 
