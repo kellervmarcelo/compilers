@@ -1,5 +1,4 @@
 import enum
-
 from src.tokens import Token
 
 
@@ -31,11 +30,6 @@ def isEndOfBlock(token: Token):
 
 
 def isDeclaration(category):
-    #    if (category == Categories.program.value
-    #            or category == Categories.procedure.value
-    #            or category == Categories.begin.value):
-    #        return False
-
     if (category == Categories.begin.value):
         return False
 
@@ -100,6 +94,8 @@ def semantic_analysis(input_stack: list[Token]):
                     raise Exception(
                         f"Declaration not allowed. Line: {token.line}")
 
+                # TODO Check for procedure parameters
+
                 symbols.append(symbol)
             else:
                 # Checks if variable was not declared
@@ -113,5 +109,7 @@ def semantic_analysis(input_stack: list[Token]):
                         and table_symbol.category == Categories.const.value):
                     raise Exception(
                         f"Const assignment is not allowed. Line: {token.line}")
+
+                # TODO Check if procedure calls are being called with the correct arguments
 
     return symbols

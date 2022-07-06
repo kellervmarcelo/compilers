@@ -20,6 +20,15 @@ def run_lexical_analysis():
     code = editor.get("1.0", tk.END)
 
     global lexical_analysis_result
+    global syntactic_analysis_result
+    global semantic_analysis_result
+
+    lexical_analysis_result = []
+    syntactic_analysis_result = []
+    semantic_analysis_result = []
+
+    lexical_output.delete(*lexical_output.get_children())
+    semantic_output.delete(*semantic_output.get_children())
 
     syntactic_output.delete('1.0', tk.END)
 
