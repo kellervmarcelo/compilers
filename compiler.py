@@ -59,7 +59,7 @@ def run_syntactic_analysis():
         syntactic_output.insert(tk.END,
                                 "Análise sintática: concluída com sucesso.\n")
     except Exception as e:
-        syntactic_output.insert(tk.END, f'Análise sintática: {str(e)}.')
+        syntactic_output.insert(tk.END, f'Análise sintática: {str(e)}.\n')
 
 
 def run_semantic_analysis():

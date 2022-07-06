@@ -110,6 +110,8 @@ def semantic_analysis(input_stack: list[Token]):
                     raise Exception(
                         f"Const assignment is not allowed. Line: {token.line}")
 
+                    # TODO Check if assignment is compatible with variable type
+
                 # TODO Check if procedure calls are being called with the correct arguments
 
     return symbols
