@@ -167,7 +167,6 @@ def createLines(*args):
     lines.delete('1.0', tk.END)
     totalLines = int(editor.index('end-1c').split('.')[0])
     for line in range(totalLines):
-        print(line)
         lines.insert("end", line + 1)
         if(line != totalLines - 1):
             lines.insert("end", "\n")
@@ -176,7 +175,7 @@ def disable(*args):
     return 'break'
 
 mid_frame = tk.Frame(root)
-mid_frame.pack(side=tk.LEFT, fill='both', expand=1) 
+mid_frame.pack(side=tk.LEFT, fill='both', expand=1)
 
 scrollbar = ttk.Scrollbar(mid_frame, command=multipleYview).pack(side=RIGHT, fill='y')
 
