@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import LEFT, RIGHT, Scrollbar, ttk
 from src.semantic_analysis import Categories, semantic_analysis
 from src.lexical_analysis import lexical_analysis
 from src.syntactic_analysis import syntactic_analysis
@@ -8,6 +8,7 @@ from src.tokens import tokens, non_terminal_tokens
 
 root = tk.Tk()
 root.title('Aula de Compiladores')
+root.resizable(False, False)
 
 file_path = ''
 
@@ -103,11 +104,15 @@ def save_as():
 def open_file():
     path = askopenfilename(filetypes=[('All Files', '*')])
     with open(path, 'r') as file:
-        code = file.read()
         editor.delete('1.0', tk.END)
-        editor.insert('1.0', code)
+        lines.delete('1.0', tk.END)
+        for line in file:
+                editor.insert(tk.END, f"{line}")
+                createLines()
         set_file_path(path)
 
+
+## ------------------- Menu ------------------------------------------------
 
 menu_bar = tk.Menu(root)
 
@@ -129,6 +134,8 @@ run_bar = tk.Menu(menu_bar, tearoff=0)
 
 root.config(menu=menu_bar)
 
+## ------------------------- Painel da esquerda ------------------------------------------------
+
 left_frame = tk.Frame(root)
 left_frame.pack(side=tk.LEFT, fill='both')
 
@@ -149,11 +156,43 @@ for key, value in non_terminal_tokens.items():
 
 ref_table.pack(fill='y', expand=1)
 
-mid_frame = tk.Frame(root)
-mid_frame.pack(side=tk.LEFT, fill='both', expand=1)
+## ------------------------- Painel do meio ------------------------------------------------
+def multipleYview(*args):
+    global scrollState
+    scrollState = args
+    editor.yview(*args)
+    lines.yview(*args)
 
-editor = tk.Text(mid_frame)
-editor.pack(fill='both', expand=1)
+def createLines(*args):
+    lines.delete('1.0', tk.END)
+    totalLines = int(editor.index('end-1c').split('.')[0])
+    for line in range(totalLines):
+        print(line)
+        lines.insert("end", line + 1)
+        if(line != totalLines - 1):
+            lines.insert("end", "\n")
+
+def disable(*args):
+    return 'break'
+
+mid_frame = tk.Frame(root)
+mid_frame.pack(side=tk.LEFT, fill='both', expand=1) 
+
+scrollbar = ttk.Scrollbar(mid_frame, command=multipleYview).pack(side=RIGHT, fill='y')
+
+lines = tk.Text(mid_frame, width=4, bg="black", fg='green')
+lines.pack(side=LEFT, fill="y")
+
+lines['yscrollcommand'] = scrollbar
+
+editor = tk.Text(mid_frame, bg="black", fg='green', insertbackground='green')
+editor.pack(fill='both', expand=True, side='right')
+
+editor.bind('<KeyRelease>', createLines)
+editor.bind('<MouseWheel>', disable)
+editor.bind('<MouseWheel>', disable)
+
+## ------------------------- Painel da direita ------------------------------------------------
 
 right_frame = tk.Frame(root, width=20)
 right_frame.rowconfigure(0, weight=1)
@@ -162,7 +201,7 @@ right_frame.rowconfigure(2, weight=1)
 
 right_frame.columnconfigure(0, weight=1)
 
-right_frame.pack(side=tk.LEFT, fill='y')
+right_frame.pack(side=tk.LEFT, fill='both')
 
 lexical_output_columns = ('ref_code', 'token', 'line')
 lexical_output = ttk.Treeview(right_frame,
@@ -195,8 +234,8 @@ semantic_output.heading('level', text='Nível')
 semantic_output.heading('scope_name', text='Escopo')
 # semantic_output.column('scope_name', stretch=True)
 
-lexical_output.grid(column=0, row=0)
-syntactic_output.grid(column=0, row=1)
-semantic_output.grid(column=0, row=2)
+lexical_output.grid(column=0, row=0, sticky=tk.EW)
+syntactic_output.grid(column=0, row=1, sticky=tk.EW)
+semantic_output.grid(column=0, row=2, sticky=tk.EW)
 
 root.mainloop()
